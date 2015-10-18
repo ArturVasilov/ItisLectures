@@ -27,7 +27,7 @@ public class RequestControllerImpl implements RequestsController {
         if (mIsFatalError) {
             return false;
         }
-        if (mLoadingRequests.contains(requestType)) {
+        if (mLoadingRequests.contains(requestType) || mLoadedRequests.contains(requestType)) {
             return false;
         }
 
