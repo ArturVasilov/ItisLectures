@@ -21,7 +21,8 @@ public class MainFragment extends Fragment {
             1) Use RequestsService reference above to process all requests you need
             2) Be sure to user correct order of request:
             2.1) Photos request must be executed only after messages request has finished
-            2.2) Friends, posts, messages and group request must be executed only after auth and config requests has finished
+            2.2) Friends, posts, messages and group request must be executed only after
+                    auth and config requests has finished
 
             Do not change any code here, except MainFragment class and possible MainActivity.
             Of course you can add as many new classes as you want.
