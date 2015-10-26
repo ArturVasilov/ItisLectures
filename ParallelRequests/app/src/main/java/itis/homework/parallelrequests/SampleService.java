@@ -33,12 +33,49 @@ public class SampleService extends IntentService {
     protected void onHandleIntent(Intent intent) {
         mRequestsService.reset();
 
-        mRequestsService.config();
-        mRequestsService.auth();
-        mRequestsService.friends();
-        mRequestsService.posts();
-        mRequestsService.groups();
-        mRequestsService.messages();
-        mRequestsService.photos();
+        //TODO : example for mark 4 from 10. Hmm, or from 100
+
+        new Thread(new Runnable() {
+            @Override
+            public void run() {
+                mRequestsService.config();
+            }
+        }).start();
+
+        new Thread(new Runnable() {
+            @Override
+            public void run() {
+                mRequestsService.auth();
+
+                new Thread(new Runnable() {
+                    @Override
+                    public void run() {
+                        mRequestsService.friends();
+                    }
+                }).start();
+
+                new Thread(new Runnable() {
+                    @Override
+                    public void run() {
+                        mRequestsService.posts();
+                    }
+                }).start();
+
+                new Thread(new Runnable() {
+                    @Override
+                    public void run() {
+                        mRequestsService.groups();
+                    }
+                }).start();
+
+                new Thread(new Runnable() {
+                    @Override
+                    public void run() {
+                        mRequestsService.messages();
+                        mRequestsService.photos();
+                    }
+                }).start();
+            }
+        }).start();
     }
 }
