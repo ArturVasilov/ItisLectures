@@ -6,11 +6,15 @@ import android.content.Intent;
 
 import itis.homework.parallelrequests.app.AppDelegate;
 import itis.homework.parallelrequests.network.RequestsService;
+import itis.homework.parallelrequests.network.ThreadUtils;
 
 /**
  * @author Artur Vasilov
  */
 public class SampleService extends IntentService {
+
+    private boolean mIsConfigLoaded = false;
+    private boolean mIsAuthLoaded = false;
 
     public static void start(Context context) {
         Intent intent = new Intent(context, SampleService.class);
@@ -33,49 +37,37 @@ public class SampleService extends IntentService {
     protected void onHandleIntent(Intent intent) {
         mRequestsService.reset();
 
-        //TODO : example for mark 4 from 10. Hmm, or from 100
-
-        new Thread(new Runnable() {
+        ThreadUtils.runInBackground(new Runnable() {
             @Override
             public void run() {
                 mRequestsService.config();
+                mIsConfigLoaded = true;
+                tryLoadSecondState();
             }
-        }).start();
+        });
 
-        new Thread(new Runnable() {
+        ThreadUtils.runInBackground(new Runnable() {
             @Override
             public void run() {
                 mRequestsService.auth();
-
-                new Thread(new Runnable() {
-                    @Override
-                    public void run() {
-                        mRequestsService.friends();
-                    }
-                }).start();
-
-                new Thread(new Runnable() {
-                    @Override
-                    public void run() {
-                        mRequestsService.posts();
-                    }
-                }).start();
-
-                new Thread(new Runnable() {
-                    @Override
-                    public void run() {
-                        mRequestsService.groups();
-                    }
-                }).start();
-
-                new Thread(new Runnable() {
-                    @Override
-                    public void run() {
-                        mRequestsService.messages();
-                        mRequestsService.photos();
-                    }
-                }).start();
+                mIsAuthLoaded = true;
+                tryLoadSecondState();
             }
-        }).start();
+        });
+
+        mRequestsService.auth();
+
+        mRequestsService.friends();
+        mRequestsService.posts();
+        mRequestsService.messages();
+        mRequestsService.groups();
+
+        mRequestsService.photos();
+    }
+
+    private void tryLoadSecondState() {
+        if (mIsAuthLoaded && mIsConfigLoaded) {
+            //TODO : load requests from second state
+        }
     }
 }
