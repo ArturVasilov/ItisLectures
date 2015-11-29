@@ -1,23 +1,25 @@
 package itis.homework.parallelrequests.network;
 
+import rx.Observable;
+
 /**
  * @author Artur Vasilov
  */
 public interface RequestsService {
 
-    void config();
+    Observable<Boolean> config();
 
-    void auth();
+    Observable<Boolean> auth();
 
-    void friends();
+    Observable<Boolean> friends();
 
-    void posts();
+    Observable<Boolean> posts();
 
-    void groups();
+    Observable<Boolean> groups();
 
-    void messages();
+    Observable<Boolean> messages();
 
-    void photos();
+    Observable<Boolean> photos();
 
     void reset();
 

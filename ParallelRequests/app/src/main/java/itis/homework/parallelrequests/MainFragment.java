@@ -7,16 +7,51 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
+import itis.homework.parallelrequests.app.AppDelegate;
+import itis.homework.parallelrequests.network.RequestsService;
+import rx.Observable;
+import rx.schedulers.Schedulers;
+
 /**
  * @author Artur Vasilov
  */
 public class MainFragment extends Fragment {
 
+    private RequestsService mRequestsService;
+
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        /*
+        mRequestsService = AppDelegate.get(getActivity()).getRequestsService();
+        mRequestsService.reset();
+
+        Observable<Boolean> config = mRequestsService
+                .config()
+                .subscribeOn(Schedulers.newThread());
+
+        Observable<Boolean> auth = mRequestsService
+                .auth()
+                .subscribeOn(Schedulers.newThread());
+
+        Observable<Boolean> friends = mRequestsService
+                .friends()
+                .subscribeOn(Schedulers.newThread());
+
+        Observable<Boolean> groups = mRequestsService
+                .groups()
+                .subscribeOn(Schedulers.newThread());
+
+        Observable<Boolean> posts = mRequestsService
+                .posts()
+                .subscribeOn(Schedulers.newThread());
+
+        Observable<Boolean> messagesAndPhotos = mRequestsService
+                .messages()
+                .concatWith(mRequestsService.photos())
+                .subscribeOn(Schedulers.newThread());
+
+         /*
             TODO : put your code somewhere here
             1) Use RequestsService reference above to process all requests you need
             2) Be sure to user correct order of request:
@@ -34,8 +69,11 @@ public class MainFragment extends Fragment {
             I don't force you to use it, it's just a sample.
          */
 
-        //TODO : do not forget to remove it when you implement requests yourself
-        SampleService.start(getActivity());
+        Observable<Boolean> observable = Observable.empty();
+
+        //TODO : create observable from previously created
+
+        observable.subscribe();
     }
 
     @Nullable

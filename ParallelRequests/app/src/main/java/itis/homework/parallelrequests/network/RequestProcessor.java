@@ -3,6 +3,10 @@ package itis.homework.parallelrequests.network;
 import android.os.Looper;
 import android.os.NetworkOnMainThreadException;
 import android.os.SystemClock;
+import android.support.annotation.NonNull;
+
+import rx.Observable;
+import rx.Subscriber;
 
 /**
  * @author Artur Vasilov
@@ -16,38 +20,38 @@ public class RequestProcessor implements RequestsService {
     }
 
     @Override
-    public void config() {
-        process(RequestType.CONFIG);
+    public Observable<Boolean> config() {
+        return process(RequestType.CONFIG);
     }
 
     @Override
-    public void auth() {
-        process(RequestType.AUTH);
+    public Observable<Boolean> auth() {
+        return process(RequestType.AUTH);
     }
 
     @Override
-    public void friends() {
-        process(RequestType.FRIENDS);
+    public Observable<Boolean> friends() {
+        return process(RequestType.FRIENDS);
     }
 
     @Override
-    public void posts() {
-        process(RequestType.POSTS);
+    public Observable<Boolean> posts() {
+        return process(RequestType.POSTS);
     }
 
     @Override
-    public void groups() {
-        process(RequestType.GROUPS);
+    public Observable<Boolean> groups() {
+        return process(RequestType.GROUPS);
     }
 
     @Override
-    public void messages() {
-        process(RequestType.MESSAGES);
+    public Observable<Boolean> messages() {
+        return process(RequestType.MESSAGES);
     }
 
     @Override
-    public void photos() {
-        process(RequestType.PHOTOS);
+    public Observable<Boolean> photos() {
+        return process(RequestType.PHOTOS);
     }
 
     @Override
@@ -55,13 +59,24 @@ public class RequestProcessor implements RequestsService {
         mRequestsController.reset();
     }
 
-    private void process(RequestType requestType) {
-        if (mRequestsController.tryRequest(requestType)) {
-            if (Looper.myLooper() == Looper.getMainLooper()) {
-                throw new NetworkOnMainThreadException();
+    @NonNull
+    private Observable<Boolean> process(RequestType requestType) {
+        return Observable.create(new Observable.OnSubscribe<Boolean>() {
+            @Override
+            public void call(Subscriber<? super Boolean> subscriber) {
+                if (Looper.myLooper() == Looper.getMainLooper()) {
+                    throw new NetworkOnMainThreadException();
+                }
+
+                if (!mRequestsController.tryRequest(requestType)) {
+                    subscriber.onError(new Throwable());
+                }
+
+                SystemClock.sleep(requestType.getDelay());
+                mRequestsController.onRequestFinished(requestType);
+
+                subscriber.onCompleted();
             }
-            SystemClock.sleep(requestType.getDelay());
-            mRequestsController.onRequestFinished(requestType);
-        }
+        });
     }
 }

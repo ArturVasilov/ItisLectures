@@ -25,12 +25,7 @@ public class ThreadUtils {
     private static final RejectedExecutionHandler REJECTED_EXECUTION_HANDLER = new RejectedExecutionHandler() {
         @Override
         public void rejectedExecution(final Runnable runnable, ThreadPoolExecutor executor) {
-            HANDLER.postDelayed(new Runnable() {
-                @Override
-                public void run() {
-                    THREAD_POOL_EXECUTOR.execute(runnable);
-                }
-            }, RETRY_DELAY);
+            HANDLER.postDelayed(() -> THREAD_POOL_EXECUTOR.execute(runnable), RETRY_DELAY);
         }
     };
 
@@ -38,7 +33,7 @@ public class ThreadUtils {
             MAXIMUM_POOL_SIZE,
             KEEP_ALIVE_TIME,
             TimeUnit.SECONDS,
-            new LinkedBlockingQueue<Runnable>(MAXIMUM_POOL_SIZE),
+            new LinkedBlockingQueue<>(MAXIMUM_POOL_SIZE),
             REJECTED_EXECUTION_HANDLER);
 
     @NonNull
