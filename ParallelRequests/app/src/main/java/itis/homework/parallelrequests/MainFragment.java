@@ -53,20 +53,11 @@ public class MainFragment extends Fragment {
 
          /*
             TODO : put your code somewhere here
-            1) Use RequestsService reference above to process all requests you need
+            1) Combine all observables to match the rule 2
             2) Be sure to user correct order of request:
             2.1) Photos request must be executed only after messages request has finished
             2.2) Friends, posts, messages and group request must be executed only after
                     auth and config requests has finished
-
-            Do not change any code here, except MainFragment class and possible MainActivity.
-            Of course you can add as many new classes as you want.
-
-            If you'll execute all requests consequentially it'll take about 47 second - it isn't thing you want.
-            Best result you can achieve is 23 seconds. Good luck!
-
-            I've provided simple version with consequential execution in SampleService class.
-            I don't force you to use it, it's just a sample.
          */
 
         Observable<Boolean> observable = Observable.empty();
